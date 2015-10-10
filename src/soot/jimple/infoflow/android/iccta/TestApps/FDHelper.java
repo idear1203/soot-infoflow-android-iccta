@@ -6,7 +6,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import soot.jimple.infoflow.IInfoflow.CodeEliminationMode;
+import soot.jimple.infoflow.InfoflowConfiguration;
+import soot.jimple.infoflow.InfoflowConfiguration.CodeEliminationMode;
+import soot.jimple.infoflow.android.InfoflowAndroidConfiguration;
 import soot.jimple.infoflow.android.SetupApplication;
 import soot.jimple.infoflow.android.source.AndroidSourceSinkManager.LayoutMatchingMode;
 import soot.jimple.infoflow.data.pathBuilders.DefaultPathBuilderFactory.PathBuilder;
@@ -77,20 +79,23 @@ public class FDHelper
 			{
 				app = new SetupApplication(androidJar, fileName, ipcManager);
 			}
-
-			app.setStopAfterFirstFlow(stopAfterFirstFlow);
-			app.setEnableImplicitFlows(implicitFlows);
-			app.setEnableStaticFieldTracking(staticTracking);
-			app.setEnableCallbacks(enableCallbacks);
-			app.setEnableExceptionTracking(enableExceptions);
-			app.setAccessPathLength(accessPathLength);
-			app.setLayoutMatchingMode(layoutMatchingMode);
-			app.setFlowSensitiveAliasing(flowSensitiveAliasing);
-			app.setComputeResultPaths(computeResultPaths);
-			app.setEnableCallbackSources(false);
-			app.setPathBuilder(pathBuilder);
 			
-			app.setCodeEliminationMode(CodeEliminationMode.NoCodeElimination);
+			InfoflowAndroidConfiguration config = new InfoflowAndroidConfiguration();
+			
+			config.setStopAfterFirstFlow(stopAfterFirstFlow);
+			config.setEnableImplicitFlows(implicitFlows);
+			config.setEnableStaticFieldTracking(staticTracking);
+			config.setEnableCallbacks(enableCallbacks);
+			config.setEnableExceptionTracking(enableExceptions);
+			InfoflowConfiguration.setAccessPathLength(accessPathLength);
+			config.setLayoutMatchingMode(layoutMatchingMode);
+			config.setFlowSensitiveAliasing(flowSensitiveAliasing);
+			config.setComputeResultPaths(computeResultPaths);
+			config.setEnableCallbackSources(false);
+			config.setPathBuilder(pathBuilder);
+			config.setCodeEliminationMode(CodeEliminationMode.NoCodeElimination);
+			
+			app.setConfig(config);
 			
 			final ITaintPropagationWrapper taintWrapper;
 			if (librarySummaryTaintWrapper) {

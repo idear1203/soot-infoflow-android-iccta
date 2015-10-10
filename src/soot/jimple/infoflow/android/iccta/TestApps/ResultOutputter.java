@@ -2,15 +2,12 @@ package soot.jimple.infoflow.android.iccta.TestApps;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.Stmt;
 import soot.jimple.infoflow.results.InfoflowResults;
-import soot.jimple.infoflow.results.ResultSinkInfo;
 import soot.jimple.infoflow.results.ResultSourceInfo;
 import soot.jimple.infoflow.solver.cfg.IInfoflowCFG;
 
@@ -25,34 +22,31 @@ public class ResultOutputter
 		{
 			if (null != results && null != results.getResults() && ! results.getResults().isEmpty())
 			{	
-				for (Entry<ResultSinkInfo, Set<ResultSourceInfo>> entry : results.getResults().entrySet()) 
+				for (ResultSourceInfo source: results.getResults().values()) 
 				{
-					for (ResultSourceInfo source : entry.getValue()) 
+					List<Unit> stmts = new ArrayList<Unit>();
+					boolean isIccResult = false;
+											
+					if (source.getPath() != null && source.getPath().length > 0)
 					{
-						List<Unit> stmts = new ArrayList<Unit>();
-						boolean isIccResult = false;
-												
-						if (source.getPath() != null && ! source.getPath().isEmpty())
+						for (Unit stmt : source.getPath())
 						{
-							for (Unit stmt : source.getPath())
+							stmts.add(stmt);
+							if (cfg.getMethodOf(stmt).getSignature().contains("IpcSC"))
 							{
-								stmts.add(stmt);
-								if (cfg.getMethodOf(stmt).getSignature().contains("IpcSC"))
-								{
-									isIccResult = true;
-								}
+								isIccResult = true;
 							}
+						}
 
-						}
-						
-						if (isIccResult)
-						{
-							iccStmtsList.add(stmts);
-						}
-						else
-						{
-							stmtsList.add(stmts);
-						}
+					}
+					
+					if (isIccResult)
+					{
+						iccStmtsList.add(stmts);
+					}
+					else
+					{
+						stmtsList.add(stmts);
 					}
 				}
 				

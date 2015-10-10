@@ -139,11 +139,11 @@ public class ToDBResultHelper {
 				
 				for (ResultSourceInfo source : results.getResults().get(sink)) 
 				{
-					List<Stmt> stmts = source.getPath();
+					Stmt[] stmts = source.getPath();
 					
-					for (int i = 0; i < stmts.size(); i++)
+					for (int i = 0; i < stmts.length; i++)
 					{
-						Stmt stmt = stmts.get(i);
+						Stmt stmt = stmts[i];
 						SootMethod sm = cfg.getMethodOf(stmt);
 						SootClass sc = sm.getDeclaringClass();
 						
@@ -174,7 +174,7 @@ public class ToDBResultHelper {
 								stmtTable.setIcc(true);
 							}
 						}
-						else if (i == stmts.size()-1)
+						else if (i == stmts.length-1)
 						{
 							//sink
 							stmtTable.setType(Constants.STMT_TYPE_SINK);
@@ -183,10 +183,10 @@ public class ToDBResultHelper {
 								stmtTable.setIcc(true);
 							}
 						}
-						else if (i == stmts.size()-2)
+						else if (i == stmts.length-2)
 						{
 							//Templately removing the duplicated sink stmt
-							Stmt sinkStmt = stmts.get(i+1);
+							Stmt sinkStmt = stmts[i+1];
 							if (stmt.toString().equals(sinkStmt.toString()))
 							{
 								continue;
